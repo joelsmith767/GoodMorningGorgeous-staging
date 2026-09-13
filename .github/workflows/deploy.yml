@@ -16,22 +16,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout GoodMorningGorgeous develop branch
-        uses: actions/checkout@v4
-        with:
-          repository: joelsmith767/GoodMorningGorgeous
-          ref: develop
-          token: ''
+      - name: Clone GoodMorningGorgeous develop branch (public repo, anonymous)
+        run: git clone --depth 1 --branch develop https://github.com/joelsmith767/GoodMorningGorgeous.git site
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
+          cache-dependency-path: site/package-lock.json
       - run: npm ci
+        working-directory: site
       - run: npm run build:staging
+        working-directory: site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site/dist
 
   deploy:
     needs: build
